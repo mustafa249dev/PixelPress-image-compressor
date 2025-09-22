@@ -22,7 +22,11 @@ export const compressImage = async (file: File) => {
     const formData = new FormData();
     formData.append('image', file);
 
-    const response = await api.post<CompressionResponse>('/compress', formData);
+    const response = await api.post<CompressionResponse>('/compress', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      }
+    });
     
     // Convert base64 to blob
     const imageBlob = await fetch(`data:image/jpeg;base64,${response.data.compressedImage}`).then(res => res.blob());
