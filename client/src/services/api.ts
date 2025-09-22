@@ -7,6 +7,7 @@ export const api = axios.create({
   headers: {
     'Content-Type': 'multipart/form-data',
   },
+  withCredentials: true,
 });
 
 export const compressImage = async (file: File) => {
@@ -14,7 +15,7 @@ export const compressImage = async (file: File) => {
     const formData = new FormData();
     formData.append('image', file);
 
-    const response = await api.post('/compress', formData, {
+    const response = await api.post('/api/compress', formData, {
       responseType: 'blob',
     });
 
