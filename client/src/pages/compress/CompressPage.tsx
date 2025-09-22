@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
-import axios from "axios";
 import Button from "../../components/common/button";
+import { compressImage } from "../../services/api";
 
 const CompressPage = () => {
   const [dragActive, setDragActive] = useState(false);
@@ -40,33 +40,23 @@ const CompressPage = () => {
     inputRef.current?.click();
   };
 
-  // Compression handler (replace with your API call)
+  // Compression handler
   const handleUpload = async () => {
     if (!selectedFile) {
       alert("Please upload an image first!");
       return;
     }
 
-    const formData = new FormData();
-    formData.append("image", selectedFile);
-
     try {
       setIsCompressing(true);
-      const response = await axios.post(
-        "http://localhost:3000/api/compress",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-          responseType: "blob",
-        }
-      );
-
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const compressedData = await compressImage(selectedFile);
+      const url = window.URL.createObjectURL(new Blob([compressedData]));
       setCompressedUrl(url);
-      setIsCompressing(false);
     } catch (err) {
       console.error(err);
-      alert("Compression failed");
+      alert("Compression failed. Please try again.");
+    } finally {
+      setIsCompressing(false);
     }
   };
 
