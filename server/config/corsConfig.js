@@ -3,12 +3,12 @@ const cors = require("cors");
 // CORS configuration
 const corsOptions = {
   origin: [
-    'https://pixelpress1.vercel.app',
-    'http://localhost:5173', // For local development
+    "https://pixelpress1.vercel.app",
+    "http://localhost:5173", // For local development
   ],
-  methods: ['GET', 'POST'],
+  methods: ["GET", "POST"],
   credentials: true,
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
 };
 
 module.exports = cors(corsOptions);
