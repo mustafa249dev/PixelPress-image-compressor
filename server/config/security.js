@@ -28,7 +28,7 @@ function security(app) {
   // Custom security middleware
   app.use((req, res, next) => {
     // Validate Content-Type for file uploads
-    if (req.path === "/api/compress" && req.method === "POST") {
+    if (req.path === "/compress" && req.method === "POST") {
       const contentType = req.headers["content-type"] || "";
       if (!contentType.includes("multipart/form-data")) {
         return res.status(415).json({
