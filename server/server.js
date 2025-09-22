@@ -14,7 +14,7 @@ app.use(express.json());
 // CORS configuration based on environment
 const allowedOrigins = [
   "http://localhost:5173", // Local Vite development
-  "https://your-frontend-domain.com", // Replace with your deployed frontend URL
+  "https://pixelpress1.vercel.app", // Vercel deployment
 ];
 
 app.use(
