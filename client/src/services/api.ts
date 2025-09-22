@@ -7,7 +7,7 @@ export const api = axios.create({
   headers: {
     'Content-Type': 'multipart/form-data',
   },
-  withCredentials: true,
+  withCredentials: false, // Set to false since we're using a different domain
 });
 
 interface CompressionResponse {
