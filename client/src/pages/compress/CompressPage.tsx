@@ -2,12 +2,29 @@ import React, { useRef, useState } from "react";
 import Button from "../../components/common/button";
 import { compressImage } from "../../services/api";
 
+interface CompressionStats {
+  originalSize: number;
+  compressedSize: number;
+  compressionRatio: string;
+}
+
 const CompressPage = () => {
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isCompressing, setIsCompressing] = useState(false);
   const [compressedUrl, setCompressedUrl] = useState<string | null>(null);
+  const [compressionStats, setCompressionStats] =
+    useState<CompressionStats | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Helper function to format file size
+  const formatFileSize = (bytes: number): string => {
+    if (bytes === 0) return "0 Bytes";
+    const k = 1024;
+    const sizes = ["Bytes", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
+  };
 
   const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -49,9 +66,14 @@ const CompressPage = () => {
 
     try {
       setIsCompressing(true);
-      const compressedData = await compressImage(selectedFile);
-      const url = window.URL.createObjectURL(new Blob([compressedData]));
+      const response = await compressImage(selectedFile);
+      const url = window.URL.createObjectURL(response.imageBlob);
       setCompressedUrl(url);
+      setCompressionStats({
+        originalSize: response.originalSize,
+        compressedSize: response.compressedSize,
+        compressionRatio: response.compressionRatio,
+      });
     } catch (err) {
       console.error(err);
       alert("Compression failed. Please try again.");
@@ -63,6 +85,7 @@ const CompressPage = () => {
   const handleReset = () => {
     setSelectedFile(null);
     setCompressedUrl(null);
+    setCompressionStats(null);
   };
 
   return (
@@ -152,8 +175,8 @@ const CompressPage = () => {
             </Button>
           </div>
         )}
-        {compressedUrl && (
-          <div className="flex flex-col items-center mt-4 gap-2">
+        {compressedUrl && compressionStats && (
+          <div className="flex flex-col items-center mt-4 gap-4">
             <span className="text-green-600 font-semibold">
               Compression Complete!
             </span>
@@ -162,6 +185,25 @@ const CompressPage = () => {
               alt="compressed"
               className="max-h-32 sm:max-h-40 rounded-lg shadow"
             />
+            <div className="w-full bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-lg font-semibold mb-2 text-center">
+                Compression Results
+              </h3>
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div className="text-gray-600">Original Size:</div>
+                <div className="font-medium">
+                  {formatFileSize(compressionStats.originalSize)}
+                </div>
+                <div className="text-gray-600">Compressed Size:</div>
+                <div className="font-medium">
+                  {formatFileSize(compressionStats.compressedSize)}
+                </div>
+                <div className="text-gray-600">Compression Ratio:</div>
+                <div className="font-medium">
+                  {compressionStats.compressionRatio}
+                </div>
+              </div>
+            </div>
             <Button
               variant="success"
               onClick={() => {

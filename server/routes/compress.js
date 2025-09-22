@@ -17,19 +17,28 @@ router.post(
       if (!req.file) {
         return res.status(400).send("No file uploaded");
       }
-      const buffer = req.file.buffer;
+      const originalBuffer = req.file.buffer;
+      const originalSize = originalBuffer.length;
+
       // Compress the image using sharp
-      const compressedImage = await sharp(buffer)
+      const compressedImage = await sharp(originalBuffer)
         .resize({ width: 1024 }) // Resize to a max width of 1024px
         .jpeg({ quality: 80 }) // Compress to 80% quality
         .toBuffer();
 
-      // Set the response headers
-      res.set("Content-Type", "image/jpeg");
-      res.set("Content-Disposition", 'attachment; filename="compressed.jpg"');
+      const compressedSize = compressedImage.length;
+      const compressionRatio = (
+        ((originalSize - compressedSize) / originalSize) *
+        100
+      ).toFixed(2);
 
-      // Send the compressed image back to the client
-      res.send(compressedImage);
+      // Send response with image and metadata
+      res.json({
+        originalSize,
+        compressedSize,
+        compressionRatio,
+        compressedImage: compressedImage.toString("base64"),
+      });
     } catch (error) {
       console.error("Error processing image:", error);
       res.status(500).send("Error processing image");
