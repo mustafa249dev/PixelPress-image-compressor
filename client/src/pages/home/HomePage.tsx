@@ -1,4 +1,3 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FaCompressArrowsAlt, FaLock, FaBolt } from "react-icons/fa";
 import Button from "../../components/common/button";
