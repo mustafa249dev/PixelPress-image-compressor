@@ -1,11 +1,13 @@
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL;
+console.log('API_URL:', API_URL); // Debug log
 
 export const api = axios.create({
-  baseURL: API_URL,
+  baseURL: API_URL || 'https://pixelpress.onrender.com/api', // Fallback URL
   headers: {
     'Content-Type': 'multipart/form-data',
+    'Accept': 'application/json',
   },
   withCredentials: false, // Set to false since we're using a different domain
 });
@@ -22,11 +24,8 @@ export const compressImage = async (file: File) => {
     const formData = new FormData();
     formData.append('image', file);
 
-    const response = await api.post<CompressionResponse>('/compress', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      }
-    });
+    console.log('Making request to:', `${API_URL}/compress`); // Debug log
+    const response = await api.post<CompressionResponse>('/compress', formData);
     
     // Convert base64 to blob
     const imageBlob = await fetch(`data:image/jpeg;base64,${response.data.compressedImage}`).then(res => res.blob());
