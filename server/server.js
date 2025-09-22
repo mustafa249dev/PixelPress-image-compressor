@@ -35,7 +35,7 @@ app.use(
 
 // Routes
 const compressRoute = require("./routes/compress");
-app.use("/api", compressRoute);
+app.use(compressRoute); // Remove /api prefix
 
 // Health check endpoint for Render
 app.get("/health", (req, res) => {

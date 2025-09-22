@@ -4,7 +4,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 console.log('API_URL:', API_URL); // Debug log
 
 export const api = axios.create({
-  baseURL: API_URL || 'https://pixelpress.onrender.com/api', // Fallback URL
+  baseURL: API_URL || 'https://pixelpress.onrender.com', // Fallback URL
   headers: {
     'Content-Type': 'multipart/form-data',
     'Accept': 'application/json',
